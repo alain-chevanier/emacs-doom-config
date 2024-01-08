@@ -104,6 +104,9 @@
 (use-package! yasnippet
   :config (yas-global-mode))
 
+;; Enable lenses for java
+(add-hook 'java-mode-hook #'lsp-java-boot-lens-mode)
+
 ;; paredit for common lisp
 (use-package! paredit
   :hook ((clojure-mode . paredit-mode)
