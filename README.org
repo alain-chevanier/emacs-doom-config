@@ -10,12 +10,12 @@ My customizations (in ~package.el~):
 - Add support for lombok
 
 Enabled packages (in ~init.el~):
-- :tool
-  - lsp
-  - (debugger +lsp)
-- :lang
-  - (clojure +lsp)
-  - (cc +lsp), requires clangd, which can be installed through home brew.
-  - (java +lsp), requires jdtls, installed on startup
-- :ui
-  - (treemacs +lsp)
+- ~:tool~
+  - ~lsp~
+  - ~(debugger +lsp)~
+- ~:lang~
+  - ~(clojure +lsp)~
+  - ~(cc +lsp)~, requires ~clangd~, which can be installed through home ~brew.~
+  - ~(java +lsp)~, requires ~jdtls~, installed on startup
+- ~:ui~
+  - ~(treemacs +lsp)~
