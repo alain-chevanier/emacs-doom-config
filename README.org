@@ -1,4 +1,14 @@
-* Config for emacs doom
+* Emacs Doom Configuration
+
+This repo contains files used by /emacs doom/ to be used as IDE for the following technologies:
+
+- ~java~ / ~spring~
+- ~clojure~
+- ~c~
+
+To use this configuration replaces the files in ~.config/doom~ or ~.doom~ with those from this repo.
+
+** Generic Customizations
 My customizations (in ~package.el~):
 - Default font-size is 22 pts
 - Default screen size is full screen
@@ -9,6 +19,7 @@ My customizations (in ~package.el~):
 - Adds a couple cosmetics for ~org-mode~.
 - Add support for lombok
 
+** Packages
 Enabled packages (in ~init.el~):
 - ~:tool~
   - ~lsp~
