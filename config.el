@@ -100,6 +100,10 @@
                         "-Xms100m"
                         ,(concat "-javaagent:"  "/Users/ricchyalainperezchevanier/.m2/repository/org/projectlombok/lombok/1.18.26/lombok-1.18.26.jar")))
 
+;; code snippets (mainly for java)
+(use-package! yasnippet
+  :config (yas-global-mode))
+
 ;; paredit for common lisp
 (use-package! paredit
   :hook ((clojure-mode . paredit-mode)
@@ -108,6 +112,8 @@
  ;; use rainbow delimiters in all  programming modes
 (use-package! rainbow-delimiters
   :hook ((prog-mode . rainbow-delimiters-mode)))
+
+
 
 ;; Org mode config
 
