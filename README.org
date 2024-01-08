@@ -1,0 +1,19 @@
+* Config for emacs doom
+My customizations (in ~package.el~):
+- Default font-size is 22 pts
+- Default screen size is full screen
+- Tabs are introduced as two spaces
+- This config disables ~evil-mode~, so no ~vim~ keybindings.
+- This add paredit to ~clojure-mode~ and ~emacs-lisp-mode~
+- Enables ~rainbow-delimiter~ for all ~prog-mode~.
+- Adds a couple cosmetics for ~org-mode~.
+- Add support for lombok
+
+Enabled packages (in ~init.el~):
+- :tool
+  - lsp
+  - (debugger +lsp)
+- :lang
+  - (clojure +lsp)
+  - (cc +lsp), requires clangd, which can be installed through home brew.
+  - (java +lsp), requires jdtls, installed on startup
