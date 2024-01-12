@@ -127,13 +127,11 @@
 
 
 (use-package! org
-  :hook (org-mode . efs/org-mode-setup)
+  ; :hook (org-mode . efs/org-mode-setup)
   :config
   (setq org-ellipsis " ▾"))
 
 (use-package! org-bullets
-  :after org
   :hook (org-mode . org-bullets-mode)
-  :custom
-  (org-bullets-bullet-list '("◉" "○" "●" "○" "●" "○" "●")))
-
+  :config
+  (setq org-bullets-bullet-list '("◉" "○" "●" "○" "●" "○" "●")))
