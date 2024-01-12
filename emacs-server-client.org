@@ -1,0 +1,61 @@
+#+title: Emacs Server Client on MacOS
+
+* Deamon emacs
+
+Create the file ~$HOME/Library/LaunchAgents/emacs_work.plist~ with the following content:
+
+#+begin_src xml
+<plist version="1.0">
+   <dict>
+     <key>Label</key>
+     <string>emacs_work</string>
+     <key>ProgramArguments</key>
+     <array>
+       <string>/usr/local/Cellar/emacs-plus@29/bin/emacs</string>
+       <string>--fg-daemon=work</string>
+     </array>
+     <key>RunAtLoad</key>
+     <true/>
+     <key>KeepAlive</key>
+     <true/>
+     <key>StandardOutPath</key>
+     <string>/tmp/emacs_work.stdout.log</string>
+     <key>StandardErrorPath</key>
+     <string>/tmp/emacs_work.stderr.log</string>
+   </dict>
+</plist>
+#+end_src
+
+Note: This assume you installed ~emacs-plus@29~ with ~brew~.
+
+To manage the deamon use the following command:
+
+#+begin_src bash
+# init deamon
+launchctl load ~/Library/LaunchAgents/emacs_work.plist
+#stop deamon
+launchctl unload ~/Library/LaunchAgents/emacs_work.plist
+#+end_src
+
+* Launch emacsclient
+
+From the command line run the following command:
+
+#+begin_src bash
+emacsclient -c -s work &
+#+end_src
+
+Alternatively you can create a script to be used as an app to be searchable by spotlight:
+
+Using Automator app create a /"Run Shell Script"/ app with the following bash script:
+
+#+begin_src bash
+/usr/local/Cellar/emacs-plus@29/bin/emacsclient \
+    --no-wait \
+    --quiet \
+    --suppress-output \
+    --create-frame -s work \
+    "$@"
+#+end_src
+
+Note: This assume you installed ~emacs-plus@29~ with ~brew~.
