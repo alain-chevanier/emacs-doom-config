@@ -32,7 +32,7 @@
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
-(setq doom-theme 'doom-dracula)
+(setq doom-theme 'doom-one)
 
 ;; This determines the style of line numbers in effect. If set to `nil', line
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
@@ -80,7 +80,7 @@
  ;; save buffers after renaming
 
  ;; set default font size to 22 pts
-(set-face-attribute 'default nil :height 220)
+(set-face-attribute 'default nil :height 200)
 
  ;; start default windows size to fullscreen
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
@@ -129,9 +129,12 @@
 (use-package! org
   ; :hook (org-mode . efs/org-mode-setup)
   :config
-  (setq org-ellipsis " ▾"))
+  (setq org-ellipsis " ▾")
+  (setq org-superstar-headline-bullets-list '("◉" "○" "●" "○" "●" "○" "●")))
 
-(use-package! org-bullets
-  :hook (org-mode . org-bullets-mode)
-  :config
-  (setq org-bullets-bullet-list '("◉" "○" "●" "○" "●" "○" "●")))
+
+
+(use-package lsp-mode
+  :ensure nil
+  :hook
+  (('clojure-mode-hook . lsp-semantic-tokens-mode)))

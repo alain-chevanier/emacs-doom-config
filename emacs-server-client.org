@@ -35,6 +35,8 @@ To manage the deamon use the following command:
 launchctl load ~/Library/LaunchAgents/emacs_work.plist
 #stop deamon
 launchctl unload ~/Library/LaunchAgents/emacs_work.plist
+
+  #
 #+end_src
 
 * Launch emacsclient
