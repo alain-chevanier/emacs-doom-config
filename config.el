@@ -32,7 +32,7 @@
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
-(setq doom-theme 'doom-one)
+(setq doom-theme 'doom-opera)
 
 ;; This determines the style of line numbers in effect. If set to `nil', line
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
@@ -80,7 +80,7 @@
  ;; save buffers after renaming
 
  ;; set default font size to 22 pts
-(set-face-attribute 'default nil :height 200)
+(set-face-attribute 'default nil :height 220)
 
  ;; start default windows size to fullscreen
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
@@ -120,21 +120,65 @@
 
 ;; Org mode config
 
-(defun efs/org-mode-setup ()
+(defun my-org-faces ()
+        ;(set-face-attribute 'org-todo nil :height 0.8)
+        (set-face-attribute 'org-level-1 nil :height 1.2)
+        (set-face-attribute 'org-level-2 nil :height 1.1)
+        (set-face-attribute 'org-level-3 nil :height 1.05)
+        (set-face-attribute 'org-level-4 nil :height 1.0))
+
+(defun org-mode-visual-fill ()
+  (setq visual-fill-column-width 100
+        visual-fill-column-center-text t)
+  (visual-fill-column-mode 1))
+
+
+(defun org-mode-setup ()
   (org-indent-mode)
   (variable-pitch-mode 1)
   (visual-line-mode 1))
 
 
 (use-package! org
-  ; :hook (org-mode . efs/org-mode-setup)
+  :hook
+  (org-mode . my-org-faces)
   :config
   (setq org-ellipsis " ▾")
   (setq org-superstar-headline-bullets-list '("◉" "○" "●" "○" "●" "○" "●")))
 
+;; (use-package! visual-fill-column
+;;         :ensure t
+;;         )
+
+;;;
+;; (use-package! visual-fill-column
+;;   :ensure t
+;;   :hook (org-mode . org-mode-visual-fill))
+;
+
+             ; (add-hook 'org-mode-hook #'efs/org-mode-visual-fill)
 
 
-(use-package lsp-mode
-  :ensure nil
-  :hook
-  (('clojure-mode-hook . lsp-semantic-tokens-mode)))
+;; (use-package! lsp-mode
+;;   :ensure nil
+;;   :hook
+;;   ('clojure-mode-hook . lsp-semantic-tokens-mode))
+
+
+
+
+(setq read-process-output-max (* 1024 1024)
+      ;; doom-font (font-spec :family "Fira Code" :size 14) which would help you to change the font and size.
+      projectile-project-search-path '("~/dev/nu")
+      projectile-enable-caching nil)
+
+
+(use-package! lsp-mode
+  :commands lsp
+  :config
+  (setq lsp-semantic-tokens-enable t)
+  (add-hook 'lsp-after-apply-edits-hook (lambda (&rest _) (save-buffer)))) ;; save buffers after renaming
+  (let ((nudev-emacs-path "~/dev/nu/nudev/ides/emacs/"))
+  (when (file-directory-p nudev-emacs-path)
+    (add-to-list 'load-path nudev-emacs-path)
+    (require 'nu nil t)))
