@@ -42,7 +42,6 @@
 ;; change `org-directory'. It must be set before org loads!
 (setq org-directory "~/org/")
 
-
 ;; Whenever you reconfigure a package, make sure to wrap your config in an
 ;; `after!' block, otherwise Doom's defaults may override your settings. E.g.
 ;;
@@ -79,18 +78,24 @@
 
  ;; save buffers after renaming
 
- ;; set default font size to 22 pts
-(set-face-attribute 'default nil :height 220)
+;; set default font size to 20 pts
+;; (set-face-attribute 'default nil :font "JetBrains Mono" :weight 'light :height 200)
+(setq read-process-output-max (* 1024 1024)
+      doom-font (font-spec :family "JetBrains Mono" :size 20 :weight 'light)
+      projectile-project-search-path '("~/dev/nu")
+      projectile-enable-caching nil)
 
- ;; start default windows size to fullscreen
+;; start default windows size to fullscreen
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
 
- ;; user 2 spaces tabs
+;; GENERAL PROGRAMMING EDITION FORMATTING
+;; user 2 spaces tabs
 (setq-default indent-tabs-mode nil)
 (setq-default tab-width 2)
 (setq indent-line-function 'insert-tab)
 
- ;; support for lombok in java
+;; JAVA CONFIG
+;; support for lombok in java
 (setq lsp-java-vmargs `(
                         "-XX:+UseParallelGC"
                         "-XX:GCTimeRatio=4"
@@ -98,16 +103,18 @@
                         "-Dsun.zip.disableMemoryMapping=true"
                         "-Xmx1G"
                         "-Xms100m"
-                        ,(concat "-javaagent:"  "/Users/ricchyalainperezchevanier/.m2/repository/org/projectlombok/lombok/1.18.26/lombok-1.18.26.jar")))
+                        ,(concat "-javaagent:"  "/Users/alain.chevanier/.m2/repository/org/projectlombok/lombok/1.18.26/lombok-1.18.26.jar")))
 
 ;; code snippets (mainly for java)
 (use-package! yasnippet
-  :config (yas-global-mode))
+        :config (yas-global-mode))
 
 ;; Enable lenses for java
 (add-hook 'java-mode-hook #'lsp-java-boot-lens-mode)
+(add-hook 'java-mode-hook #'subword-mode)
+(add-hook 'java-mode-hook #'yas-minor-mode)
 
-;; paredit for common lisp
+;; paredit for lisp family
 (use-package! paredit
   :hook ((clojure-mode . paredit-mode)
          (emacs-lisp-mode . paredit-mode)))
@@ -116,63 +123,56 @@
 (use-package! rainbow-delimiters
   :hook ((prog-mode . rainbow-delimiters-mode)))
 
-
-
-;; Org mode config
+;; ORG MODE Config
+(require 'org)
+(require 'ox-latex)
 
 (defun my-org-faces ()
-        ;(set-face-attribute 'org-todo nil :height 0.8)
-        (set-face-attribute 'org-level-1 nil :height 1.2)
-        (set-face-attribute 'org-level-2 nil :height 1.1)
-        (set-face-attribute 'org-level-3 nil :height 1.05)
-        (set-face-attribute 'org-level-4 nil :height 1.0))
+       ;(set-face-attribute 'org-todo nil :height 0.8)
+       (set-face-attribute 'org-level-1 nil :height 1.2)
+       (set-face-attribute 'org-level-2 nil :height 1.1)
+       (set-face-attribute 'org-level-3 nil :height 1.05)
+       (set-face-attribute 'org-level-4 nil :height 1.0))
+
+(use-package! org
+  :hook
+  (org-mode . my-org-faces)
+  :config
+  ;; Nice bullet points in org mode
+  (setq org-ellipsis "▾"
+        org-superstar-headline-bullets-list '("◉" "○" "●" "○" "●" "○" "●")
+        org-src-fontify-natively t
+        org-startup-with-inline-images t)
+  ;; config for org-mode to work nicely with minted for code syntax highligting
+  (add-to-list 'org-latex-packages-alist '("" "minted"))
+  (setq org-latex-src-block-backend 'minted
+        org-latex-pdf-process
+        '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+          "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+          "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f")))
 
 (defun org-mode-visual-fill ()
   (setq visual-fill-column-width 100
         visual-fill-column-center-text t)
   (visual-fill-column-mode 1))
 
-
 (defun org-mode-setup ()
   (org-indent-mode)
   (variable-pitch-mode 1)
   (visual-line-mode 1))
 
-
-(use-package! org
-  :hook
-  (org-mode . my-org-faces)
-  :config
-  (setq org-ellipsis " ▾")
-  (setq org-superstar-headline-bullets-list '("◉" "○" "●" "○" "●" "○" "●")))
-
-;; (use-package! visual-fill-column
-;;         :ensure t
-;;         )
-
+                ;; (use-package! visual-fill-column
+                ;;         :ensure t
+                ;;         )
 ;;;
-;; (use-package! visual-fill-column
-;;   :ensure t
-;;   :hook (org-mode . org-mode-visual-fill))
-;
+                ;; (use-package! visual-fill-column
+                ;;   :ensure t
+                ;;   :hook (org-mode . org-mode-visual-fill))
 
-             ; (add-hook 'org-mode-hook #'efs/org-mode-visual-fill)
-
-
-;; (use-package! lsp-mode
-;;   :ensure nil
-;;   :hook
-;;   ('clojure-mode-hook . lsp-semantic-tokens-mode))
+                ;; (add-hook 'org-mode-hook #'efs/org-mode-visual-fill)
 
 
-
-
-(setq read-process-output-max (* 1024 1024)
-      ;; doom-font (font-spec :family "Fira Code" :size 14) which would help you to change the font and size.
-      projectile-project-search-path '("~/dev/nu")
-      projectile-enable-caching nil)
-
-
+        ;; NU CONFIG
 (use-package! lsp-mode
   :commands lsp
   :config
@@ -182,3 +182,23 @@
   (when (file-directory-p nudev-emacs-path)
     (add-to-list 'load-path nudev-emacs-path)
     (require 'nu nil t)))
+
+
+;; GITHUB COPILOT CONFIG
+
+(use-package! copilot
+  :hook (prog-mode . copilot-mode)
+  :bind (:map copilot-completion-map
+              ("<tab>" . 'copilot-accept-completion)
+              ("TAB" . 'copilot-accept-completion)
+              ("C-TAB" . 'copilot-accept-completion-by-word)
+              ("C-<tab>" . 'copilot-accept-completion-by-word)
+              ("C-n" . 'copilot-next-completion)
+              ("C-p" . 'copilot-previous-completion))
+
+  :config
+  (add-to-list 'copilot-indentation-alist '(prog-mode 2))
+  (add-to-list 'copilot-indentation-alist '(org-mode 2))
+  (add-to-list 'copilot-indentation-alist '(text-mode 2))
+  (add-to-list 'copilot-indentation-alist '(closure-mode 2))
+  (add-to-list 'copilot-indentation-alist '(emacs-lisp-mode 2)))
