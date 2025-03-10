@@ -105,19 +105,24 @@
                         "-Xms100m"
                         ,(concat "-javaagent:"  "/Users/alain.chevanier/.m2/repository/org/projectlombok/lombok/1.18.26/lombok-1.18.26.jar")))
 
-;; code snippets (mainly for java)
-(use-package! yasnippet
-        :config (yas-global-mode))
-
 ;; Enable lenses for java
 (add-hook 'java-mode-hook #'lsp-java-boot-lens-mode)
 (add-hook 'java-mode-hook #'subword-mode)
 (add-hook 'java-mode-hook #'yas-minor-mode)
 
+;; use smartparens with java and c
+(use-package! smartparens
+  :hook ((java-mode . smartparens-mode)
+         (c-mode . smartparens-mode)))
+
 ;; paredit for lisp family
 (use-package! paredit
   :hook ((clojure-mode . paredit-mode)
          (emacs-lisp-mode . paredit-mode)))
+
+;; code snippets (mainly for java)
+(use-package! yasnippet
+  :config (yas-global-mode))
 
  ;; use rainbow delimiters in all  programming modes
 (use-package! rainbow-delimiters
