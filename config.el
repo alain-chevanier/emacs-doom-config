@@ -32,7 +32,7 @@
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
-(setq doom-theme 'doom-one)
+(setq doom-theme 'doom-opera)
 
 ;; This determines the style of line numbers in effect. If set to `nil', line
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
@@ -90,7 +90,12 @@
 (setq-default tab-width 2)
 (setq indent-line-function 'insert-tab)
 
- ;; support for lombok in java
+;; java home
+(setenv "JAVA_HOME" "/Library/Java/JavaVirtualMachines/jdk-17.jdk/Contents/Home/")
+(setq lsp-java-java-path "/Library/Java/JavaVirtualMachines/jdk-17.jdk/Contents/Home/bin/java")
+
+
+;; support for lombok in java
 (setq lsp-java-vmargs `(
                         "-XX:+UseParallelGC"
                         "-XX:GCTimeRatio=4"
@@ -116,6 +121,10 @@
 (use-package! rainbow-delimiters
   :hook ((prog-mode . rainbow-delimiters-mode)))
 
+;; use smartparens with java and c
+(use-package! smartparens
+  :hook ((java-mode . smartparens-mode)
+         (c-mode . smartparens-mode)))
 
 
 ;; Org mode config
