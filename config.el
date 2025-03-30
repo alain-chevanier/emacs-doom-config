@@ -79,14 +79,19 @@
  ;; save buffers after renaming
 
 ;; set default font size to 20 pts
-;; (set-face-attribute 'default nil :font "JetBrains Mono" :weight 'light :height 200)
+(set-face-attribute 'default nil :font "JetBrains Mono" :weight 'light :height 200)
 (setq read-process-output-max (* 1024 1024)
-      doom-font (font-spec :family "JetBrains Mono" :size 20 :weight 'light)
       projectile-project-search-path '("~/dev/nu")
       projectile-enable-caching nil)
 
-;; start default windows size to fullscreen
+;; (setq doom-font (font-spec :family "JetBrains Mono" :size 22 :weight 'light))
+
+                ;; start default windows size to fullscreen
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
+
+;; Let the desktop background show through
+(set-frame-parameter (selected-frame) 'alpha '(95 . 100))
+(add-to-list 'default-frame-alist '(alpha . (95 . 95)))
 
 ;; GENERAL PROGRAMMING EDITION FORMATTING
 ;; user 2 spaces tabs
@@ -124,30 +129,43 @@
 (use-package! yasnippet
   :config (yas-global-mode))
 
- ;; use rainbow delimiters in all  programming modes
+;; use rainbow delimiters in all  programming modes
 (use-package! rainbow-delimiters
   :hook ((prog-mode . rainbow-delimiters-mode)))
 
 ;; ORG MODE Config
 (require 'org)
+(require 'org-present)
 (require 'ox-latex)
 
+(use-package! visual-fill-column
+  :config
+        (setq visual-fill-column-width 140
+              visual-fill-column-center-text t))
+
 (defun my-org-faces ()
-       ;(set-face-attribute 'org-todo nil :height 0.8)
-       (set-face-attribute 'org-level-1 nil :height 1.2)
-       (set-face-attribute 'org-level-2 nil :height 1.1)
-       (set-face-attribute 'org-level-3 nil :height 1.05)
-       (set-face-attribute 'org-level-4 nil :height 1.0))
+  ;; (set-face-attribute 'org-todo nil :height 0.8)
+  (set-face-attribute 'org-level-1 nil :height 1.2)
+  (set-face-attribute 'org-level-2 nil :height 1.1)
+  (set-face-attribute 'org-level-3 nil :height 1.05)
+  (set-face-attribute 'org-level-4 nil :height 1.0)
+  (set-face-attribute 'org-document-title nil :weight 'bold :height 1.3)
+  (visual-fill-column-mode 1)
+  (display-line-numbers-mode 0))
 
 (use-package! org
+  :after visual-fill-column
   :hook
   (org-mode . my-org-faces)
+  
   :config
   ;; Nice bullet points in org mode
   (setq org-ellipsis "▾"
         org-superstar-headline-bullets-list '("◉" "○" "●" "○" "●" "○" "●")
+        ;;org-startup-with-inline-images t
         org-src-fontify-natively t
-        org-startup-with-inline-images t)
+        org-hide-emphasis-markers t)
+
   ;; config for org-mode to work nicely with minted for code syntax highligting
   (add-to-list 'org-latex-packages-alist '("" "minted"))
   (setq org-latex-src-block-backend 'minted
@@ -166,38 +184,67 @@
   (variable-pitch-mode 1)
   (visual-line-mode 1))
 
-                ;; (use-package! visual-fill-column
-                ;;         :ensure t
-                ;;         )
+(use-package! org-present
+  :after org
+  :hook
+  ((org-present-mode  .    (lambda ()
+                                  ;;(org-present-big)
+                                (setq header-line-format " ")
+                                (org-display-inline-images)
+                                  ;;(org-present-hide-cursor)
+                                  ;;(org-present-read-only)
+                                  ))
+   (org-present-mode-quit . (lambda ()
+                                  ;;(org-present-small)
+                                (setq header-line-format nil)
+                                (org-remove-inline-images)
+                                  ;;(org-present-show-cursor)
+                                  ;;(org-present-read-write)
+                                  ))
+   (org-present-run-after-navigate-functions . (lambda ()
+                                                 ;; Show only top-level headlines
+                                                 (org-overview)
+                                                 ;; Unfold the current entry
+                                                 (org-show-entry)
+                                                  ;; Show only direct subheadings of the slide but don't expand them
+                                                 (org-show-children)))))
+
+
 ;;;
-                ;; (use-package! visual-fill-column
-                ;;   :ensure t
-                ;;   :hook (org-mode . org-mode-visual-fill))
+;; (use-package! visual-fill-column
+;;   :ensure t
+;;   :hook (org-mode . org-mode-visual-fill))
 
-                ;; (add-hook 'org-mode-hook #'efs/org-mode-visual-fill)
+;; (add-hook 'org-mode-hook #'efs/org-mode-visual-fill)
 
 
-        ;; NU CONFIG
+;; NU CONFIG
 (use-package! lsp-mode
   :commands lsp
   :config
-  (setq lsp-semantic-tokens-enable t)
   (add-hook 'lsp-after-apply-edits-hook (lambda (&rest _) (save-buffer)))) ;; save buffers after renaming
   (let ((nudev-emacs-path "~/dev/nu/nudev/ides/emacs/"))
   (when (file-directory-p nudev-emacs-path)
     (add-to-list 'load-path nudev-emacs-path)
     (require 'nu nil t)))
 
+(use-package! clojure-mode
+  :config
+  (setq lsp-semantic-tokens-enable t))
+
+;; PLANTUML CONFIG
+(add-to-list 'auto-mode-alist '("\\.plantuml\\'" . plantuml-mode))
+(add-to-list 'org-src-lang-modes '("plantuml" . plantuml))
+(org-babel-do-load-languages 'org-babel-load-languages '((plantuml . t)))
 
 ;; GITHUB COPILOT CONFIG
-
 (use-package! copilot
   :hook (prog-mode . copilot-mode)
   :bind (:map copilot-completion-map
-              ("<tab>" . 'copilot-accept-completion)
-              ("TAB" . 'copilot-accept-completion)
-              ("C-TAB" . 'copilot-accept-completion-by-word)
-              ("C-<tab>" . 'copilot-accept-completion-by-word)
+              ("C-<tab>" . 'copilot-accept-completion)
+              ("C-TAB" . 'copilot-accept-completion)
+              ("C-M-TAB" . 'copilot-accept-completion-by-word)
+              ("C-M-<tab>" . 'copilot-accept-completion-by-word)
               ("C-n" . 'copilot-next-completion)
               ("C-p" . 'copilot-previous-completion))
 
