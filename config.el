@@ -139,9 +139,7 @@
 (require 'ox-latex)
 
 (use-package! visual-fill-column
-  :config
-        (setq visual-fill-column-width 140
-              visual-fill-column-center-text t))
+  :config)
 
 (defun my-org-faces ()
   ;; (set-face-attribute 'org-todo nil :height 0.8)
@@ -151,6 +149,7 @@
   (set-face-attribute 'org-level-4 nil :height 1.0)
   (set-face-attribute 'org-document-title nil :weight 'bold :height 1.3)
   (visual-fill-column-mode 1)
+  (visual-fill-column-toggle-center-text)
   (display-line-numbers-mode 0))
 
 (use-package! org
@@ -166,6 +165,8 @@
         org-src-fontify-natively t
         org-hide-emphasis-markers t)
 
+  (setq visual-fill-column-width 150)
+
   ;; config for org-mode to work nicely with minted for code syntax highligting
   (add-to-list 'org-latex-packages-alist '("" "minted"))
   (setq org-latex-src-block-backend 'minted
@@ -174,49 +175,35 @@
           "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
           "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f")))
 
-(defun org-mode-visual-fill ()
-  (setq visual-fill-column-width 100
-        visual-fill-column-center-text t)
-  (visual-fill-column-mode 1))
 
-(defun org-mode-setup ()
-  (org-indent-mode)
-  (variable-pitch-mode 1)
-  (visual-line-mode 1))
+
+;; (defun org-mode-visual-fill ()
+;;   (setq visual-fill-column-width 100
+;;         visual-fill-column-center-text t)
+;;   (visual-fill-column-mode 1))
+
+;; (defun org-mode-setup ()
+;;   (org-indent-mode)
+;;   (variable-pitch-mode 1)
+;;   (visual-line-mode 1))
 
 (use-package! org-present
   :after org
   :hook
   ((org-present-mode  .    (lambda ()
-                                  ;;(org-present-big)
-                                (setq header-line-format " ")
-                                (org-display-inline-images)
-                                  ;;(org-present-hide-cursor)
-                                  ;;(org-present-read-only)
-                                  ))
+                             ;;(org-present-big)
+                             (setq header-line-format " ")
+                             (org-display-inline-images)
+                             ;;(org-present-hide-cursor)
+                             ;;(org-present-read-only)
+                             ))
    (org-present-mode-quit . (lambda ()
-                                  ;;(org-present-small)
-                                (setq header-line-format nil)
-                                (org-remove-inline-images)
-                                  ;;(org-present-show-cursor)
-                                  ;;(org-present-read-write)
-                                  ))
-   (org-present-run-after-navigate-functions . (lambda ()
-                                                 ;; Show only top-level headlines
-                                                 (org-overview)
-                                                 ;; Unfold the current entry
-                                                 (org-show-entry)
-                                                  ;; Show only direct subheadings of the slide but don't expand them
-                                                 (org-show-children)))))
-
-
-;;;
-;; (use-package! visual-fill-column
-;;   :ensure t
-;;   :hook (org-mode . org-mode-visual-fill))
-
-;; (add-hook 'org-mode-hook #'efs/org-mode-visual-fill)
-
+                              ;;(org-present-small)
+                              (setq header-line-format nil)
+                              (org-remove-inline-images)
+                              ;;(org-present-show-cursor)
+                              ;;(org-present-read-write)
+                              ))))
 
 ;; NU CONFIG
 (use-package! lsp-mode
@@ -245,8 +232,8 @@
               ("C-TAB" . 'copilot-accept-completion)
               ("C-M-TAB" . 'copilot-accept-completion-by-word)
               ("C-M-<tab>" . 'copilot-accept-completion-by-word)
-              ("C-n" . 'copilot-next-completion)
-              ("C-p" . 'copilot-previous-completion))
+              ("C-M-n" . 'copilot-next-completion)
+              ("C-M-p" . 'copilot-previous-completion))
 
   :config
   (add-to-list 'copilot-indentation-alist '(prog-mode 2))
