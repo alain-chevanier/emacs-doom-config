@@ -179,13 +179,13 @@
 (use-package! org-present
   :after org
   :hook
-  ((org-present-mode      .    (lambda ()
-                                 ;;(org-present-big)
-                                 (setq header-line-format " ")
-                                 (org-display-inline-images)
-                                 ;;(org-present-hide-cursor)
-                                 ;;(org-present-read-only)
-                                 ))
+  ((org-present-mode  .    (lambda ()
+                             ;;(org-present-big)
+                             (setq header-line-format " ")
+                             (org-display-inline-images)
+                             ;;(org-present-hide-cursor)
+                             ;;(org-present-read-only)
+                             ))
    (org-present-mode-quit . (lambda ()
                               ;;(org-present-small)
                               (setq header-line-format nil)
