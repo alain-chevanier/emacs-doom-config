@@ -40,7 +40,7 @@
 
 ;; If you use `org' and don't want your org files in the default location below,
 ;; change `org-directory'. It must be set before org loads!
-(setq org-directory "~/org/")
+(setq org-directory "~/Dropbox/org-docs")
 
 ;; Whenever you reconfigure a package, make sure to wrap your config in an
 ;; `after!' block, otherwise Doom's defaults may override your settings. E.g.
@@ -79,19 +79,19 @@
  ;; save buffers after renaming
 
 ;; set default font size to 20 pts
-(set-face-attribute 'default nil :font "JetBrains Mono" :weight 'light :height 200)
+;; (set-face-attribute 'default nil :font "JetBrains Mono" :weight 'light :height 200)
 (setq read-process-output-max (* 1024 1024)
       projectile-project-search-path '("~/dev/nu")
       projectile-enable-caching nil)
+(set-language-environment "UTF-8")
+(setq doom-font (font-spec :family "JetBrains Mono" :size 20 :weight 'light))
 
-;; (setq doom-font (font-spec :family "JetBrains Mono" :size 22 :weight 'light))
-
-                ;; start default windows size to fullscreen
+;; start default windows size to fullscreen
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
 
 ;; Let the desktop background show through
-(set-frame-parameter (selected-frame) 'alpha '(95 . 100))
-(add-to-list 'default-frame-alist '(alpha . (95 . 95)))
+(set-frame-parameter (selected-frame) 'alpha '(96 . 100))
+(add-to-list 'default-frame-alist '(alpha . (96 . 96)))
 
 ;; GENERAL PROGRAMMING EDITION FORMATTING
 ;; user 2 spaces tabs
@@ -99,8 +99,10 @@
 (setq-default tab-width 2)
 (setq indent-line-function 'insert-tab)
 
-;; JAVA CONFIG
-;; support for lombok in java
+(require 'lsp-java)
+
+                ;; JAVA CONFIG
+                ;; support for lombok in java
 (setq lsp-java-vmargs `(
                         "-XX:+UseParallelGC"
                         "-XX:GCTimeRatio=4"
@@ -113,7 +115,7 @@
 ;; Enable lenses for java
 (add-hook 'java-mode-hook #'lsp-java-boot-lens-mode)
 (add-hook 'java-mode-hook #'subword-mode)
-(add-hook 'java-mode-hook #'yas-minor-mode)
+;;(add-hook 'java-mode-hook #'yas-minor-mode)
 
 ;; use smartparens with java and c
 (use-package! smartparens
@@ -135,13 +137,10 @@
 
 ;; ORG MODE Config
 (require 'org)
+(require 'org-bullets)
 (require 'org-present)
 (require 'ox-latex)
-
-(use-package! visual-fill-column
-  :config
-        (setq visual-fill-column-width 140
-              visual-fill-column-center-text t))
+(require 'visual-fill-column)
 
 (defun my-org-faces ()
   ;; (set-face-attribute 'org-todo nil :height 0.8)
@@ -149,22 +148,25 @@
   (set-face-attribute 'org-level-2 nil :height 1.1)
   (set-face-attribute 'org-level-3 nil :height 1.05)
   (set-face-attribute 'org-level-4 nil :height 1.0)
-  (set-face-attribute 'org-document-title nil :weight 'bold :height 1.3)
+  (set-face-attribute 'org-document-title nil :weight 'bold :height 1.4)
+  (display-line-numbers-mode 0)
   (visual-fill-column-mode 1)
-  (display-line-numbers-mode 0))
+  (visual-fill-column-toggle-center-text))
 
 (use-package! org
-  :after visual-fill-column
   :hook
   (org-mode . my-org-faces)
   
   :config
   ;; Nice bullet points in org mode
-  (setq org-ellipsis "▾"
+  (setq org-src-fontify-natively t
+        org-ellipsis "▾"
+        ;; let's personalize org heading bullets with custom characters
         org-superstar-headline-bullets-list '("◉" "○" "●" "○" "●" "○" "●")
-        ;;org-startup-with-inline-images t
-        org-src-fontify-natively t
         org-hide-emphasis-markers t)
+
+  ;; org-mode to use visual-fill-column
+  (setq visual-fill-column-width 150)
 
   ;; config for org-mode to work nicely with minted for code syntax highligting
   (add-to-list 'org-latex-packages-alist '("" "minted"))
@@ -174,49 +176,23 @@
           "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
           "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f")))
 
-(defun org-mode-visual-fill ()
-  (setq visual-fill-column-width 100
-        visual-fill-column-center-text t)
-  (visual-fill-column-mode 1))
-
-(defun org-mode-setup ()
-  (org-indent-mode)
-  (variable-pitch-mode 1)
-  (visual-line-mode 1))
-
 (use-package! org-present
   :after org
   :hook
-  ((org-present-mode  .    (lambda ()
-                                  ;;(org-present-big)
-                                (setq header-line-format " ")
-                                (org-display-inline-images)
-                                  ;;(org-present-hide-cursor)
-                                  ;;(org-present-read-only)
-                                  ))
+  ((org-present-mode      .    (lambda ()
+                                 ;;(org-present-big)
+                                 (setq header-line-format " ")
+                                 (org-display-inline-images)
+                                 ;;(org-present-hide-cursor)
+                                 ;;(org-present-read-only)
+                                 ))
    (org-present-mode-quit . (lambda ()
-                                  ;;(org-present-small)
-                                (setq header-line-format nil)
-                                (org-remove-inline-images)
-                                  ;;(org-present-show-cursor)
-                                  ;;(org-present-read-write)
-                                  ))
-   (org-present-run-after-navigate-functions . (lambda ()
-                                                 ;; Show only top-level headlines
-                                                 (org-overview)
-                                                 ;; Unfold the current entry
-                                                 (org-show-entry)
-                                                  ;; Show only direct subheadings of the slide but don't expand them
-                                                 (org-show-children)))))
-
-
-;;;
-;; (use-package! visual-fill-column
-;;   :ensure t
-;;   :hook (org-mode . org-mode-visual-fill))
-
-;; (add-hook 'org-mode-hook #'efs/org-mode-visual-fill)
-
+                              ;;(org-present-small)
+                              (setq header-line-format nil)
+                              (org-remove-inline-images)
+                              ;;(org-present-show-cursor)
+                              ;;(org-present-read-write)
+                              ))))
 
 ;; NU CONFIG
 (use-package! lsp-mode
@@ -233,24 +209,36 @@
   (setq lsp-semantic-tokens-enable t))
 
 ;; PLANTUML CONFIG
-(add-to-list 'auto-mode-alist '("\\.plantuml\\'" . plantuml-mode))
-(add-to-list 'org-src-lang-modes '("plantuml" . plantuml))
-(org-babel-do-load-languages 'org-babel-load-languages '((plantuml . t)))
+;; (add-to-list 'auto-mode-alist '("\\.plantuml\\'" . plantuml-mode))
+;; (add-to-list 'org-src-lang-modes '("plantuml" . plantuml))
+;; (org-babel-do-load-languages 'org-babel-load-languages '((plantuml . t)))
 
 ;; GITHUB COPILOT CONFIG
 (use-package! copilot
   :hook (prog-mode . copilot-mode)
   :bind (:map copilot-completion-map
-              ("C-<tab>" . 'copilot-accept-completion)
-              ("C-TAB" . 'copilot-accept-completion)
-              ("C-M-TAB" . 'copilot-accept-completion-by-word)
+              ("C-<tab>"   . 'copilot-accept-completion)
+              ("C-TAB"     . 'copilot-accept-completion)
+              ("C-M-TAB"   . 'copilot-accept-completion-by-word)
               ("C-M-<tab>" . 'copilot-accept-completion-by-word)
-              ("C-n" . 'copilot-next-completion)
-              ("C-p" . 'copilot-previous-completion))
-
+              ;;("C-n"       . 'copilot-next-completion)
+              ;;("C-p"       . 'copilot-previous-completion)
+              )
   :config
   (add-to-list 'copilot-indentation-alist '(prog-mode 2))
   (add-to-list 'copilot-indentation-alist '(org-mode 2))
   (add-to-list 'copilot-indentation-alist '(text-mode 2))
   (add-to-list 'copilot-indentation-alist '(closure-mode 2))
   (add-to-list 'copilot-indentation-alist '(emacs-lisp-mode 2)))
+
+;; install and configure copilot-chat
+(use-package! copilot-chat
+  :after (request org)
+  :bind  (:map global-map
+               ("C-c C-y"   . copilot-chat-yank)
+               ;; ("C-c M-y"   . copilot-chat-yank-pop)
+               ;; ("C-c C-M-y" . (lambda ()
+               ;;                  (interactive)
+               ;;                  (copilot-chat-yank-pop -1)))
+               )
+  )

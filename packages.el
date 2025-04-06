@@ -49,11 +49,19 @@
 ;; ...Or *all* packages (NOT RECOMMENDED; will likely break things)
 ;; (unpin! t)
 
-(package! org-present
-  :recipe (:host github :repo "rlister/org-present" :files ("*.el")))
-
 (package! visual-fill-column
   :recipe (:host codeberg :repo "joostkremers/visual-fill-column" :files ("*.el")))
 
+(package! org-present
+  :recipe (:host github :repo "rlister/org-present" :files ("*.el")))
+
+(package! org-bullets
+  :recipe (:host github :repo "sabof/org-bullets" :files ("*.el")))
+
 (package! copilot
   :recipe (:host github :repo "copilot-emacs/copilot.el" :files ("*.el")))
+
+(package! polymode)
+
+(package! copilot-chat
+  :recipe (:host github :repo "chep/copilot-chat.el" :files ("*.el")))
