@@ -165,7 +165,7 @@
         org-hide-emphasis-markers t)
 
   ;; org-mode to use visual-fill-column
-  (setq visual-fill-column-width 160)
+  (setq visual-fill-column-width 180)
 
   ;; config for org-mode to work nicely with minted for code syntax highligting
   (add-to-list 'org-latex-packages-alist '("" "minted"))
@@ -199,8 +199,32 @@
 
 
 ;; ORG ROAM CONFIG
-;; (require 'org-roam)
-;; (setq org-roam-directory (file-truename "~/Dropbox/org-docs/roam"))
+(require 'org-roam)
+
+(use-package! org-roam
+  :after org
+  :hook
+  (org-roam-mode . (lambda ()
+                     (org-roam-db-autosync-mode)
+                     (setq org-roam-completion-everywhere t)))
+
+  :bind (:map global-map
+              ("C-c C-n l" . org-roam-buffer-toggle)
+              ("C-c C-n f" . org-roam-node-find)
+              ("C-c C-n i" . org-roam-node-insert)
+         :map org-mode-map
+              ("C-M-i"    . completion-at-point))
+  :config
+  (setq org-roam-directory (file-truename "~/Dropbox/org-docs/roam"))
+  (setq org-roam-completion-everywhere t)
+  ;; (setq org-roam-capture-templates
+  ;;       '(("d" "default" plain "%?"
+  ;;          :target (file+head "${slug}.org" "#+title: ${title}\n")
+  ;;          :unnarrowed t)
+  ;;         ("r" "reference" plain "%?"
+  ;;          :target (file+head "${slug}.org" "#+title: ${title}\n#+roam_key: ${ref}\n")
+  ;;          :unnarrowed t)))
+  )
 
 ;; MARKDOWN CONFIG IMPROVEMENTS
 ;; TODO: TO BE TESTED

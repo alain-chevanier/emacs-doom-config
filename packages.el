@@ -55,6 +55,8 @@
 (package! org-present
   :recipe (:host github :repo "rlister/org-present" :files ("*.el")))
 
+(package! org-roam)
+
 (package! org-bullets
   :recipe (:host github :repo "sabof/org-bullets" :files ("*.el")))
 
