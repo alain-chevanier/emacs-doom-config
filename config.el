@@ -110,7 +110,7 @@
                         "-Dsun.zip.disableMemoryMapping=true"
                         "-Xmx1G"
                         "-Xms100m"
-                        ,(concat "-javaagent:"  "/Users/alain.chevanier/.m2/repository/org/projectlombok/lombok/1.18.26/lombok-1.18.26.jar")))
+                        ,(concat "-javaagent:"  "~/.m2/repository/org/projectlombok/lombok/1.18.26/lombok-1.18.26.jar")))
 
 ;; Enable lenses for java
 (add-hook 'java-mode-hook #'lsp-java-boot-lens-mode)
@@ -165,7 +165,7 @@
         org-hide-emphasis-markers t)
 
   ;; org-mode to use visual-fill-column
-  (setq visual-fill-column-width 150)
+  (setq visual-fill-column-width 160)
 
   ;; config for org-mode to work nicely with minted for code syntax highligting
   (add-to-list 'org-latex-packages-alist '("" "minted"))
@@ -197,6 +197,11 @@
   :config
   (setq visual-fill-column-width 150))
 
+
+;; ORG ROAM CONFIG
+;; (require 'org-roam)
+;; (setq org-roam-directory (file-truename "~/Dropbox/org-docs/roam"))
+
 ;; MARKDOWN CONFIG IMPROVEMENTS
 ;; TODO: TO BE TESTED
 (use-package! markdown-mode
@@ -209,13 +214,13 @@
   :config
   (setq visual-fill-column-width 150)
   (custom-set-faces
-        '(markdown-header-face ((t (:inherit font-lock-function-name-face
-                                    :weight regular
-                                    :family "variable-pitch"))))
-        '(markdown-header-face-1 ((t (:inherit markdown-header-face :height 1.4))))
-        '(markdown-header-face-2 ((t (:inherit markdown-header-face :height 1.2))))
-        '(markdown-header-face-3 ((t (:inherit markdown-header-face :height 1.1))))
-        '(markdown-header-face-4 ((t (:inherit markdown-header-face :height 1.05))))))
+   '(markdown-header-face ((t (:inherit font-lock-function-name-face
+                               :weight regular
+                               :family "variable-pitch"))))
+   '(markdown-header-face-1 ((t (:inherit markdown-header-face :height 1.4))))
+   '(markdown-header-face-2 ((t (:inherit markdown-header-face :height 1.2))))
+   '(markdown-header-face-3 ((t (:inherit markdown-header-face :height 1.1))))
+   '(markdown-header-face-4 ((t (:inherit markdown-header-face :height 1.05))))))
 
                                 ;; NU CONFIG
 (use-package! lsp-mode
@@ -238,15 +243,21 @@
 
 ;; GITHUB COPILOT CONFIG
 (use-package! copilot
-  :hook (prog-mode . copilot-mode)
-  :bind (:map copilot-completion-map
-              ("C-<tab>"   . 'copilot-accept-completion)
-              ("C-TAB"     . 'copilot-accept-completion)
-              ("C-M-TAB"   . 'copilot-accept-completion-by-word)
-              ("C-M-<tab>" . 'copilot-accept-completion-by-word)
-              ;;("C-n"       . 'copilot-next-completion)
-              ;;("C-p"       . 'copilot-previous-completion)
-              )
+  :hook
+  (org-mode      . copilot-mode)
+  (prog-mode     . copilot-mode)
+  (markdown-mode . copilot-mode)
+
+  :bind
+  (:map copilot-completion-map
+        ("C-<tab>"   . 'copilot-accept-completion)
+        ("C-TAB"     . 'copilot-accept-completion)
+        ("C-M-TAB"   . 'copilot-accept-completion-by-word)
+        ("C-M-<tab>" . 'copilot-accept-completion-by-word)
+        ;;("C-n"       . 'copilot-next-completion)
+        ;;("C-p"       . 'copilot-previous-completion)
+        )
+
   :config
   (add-to-list 'copilot-indentation-alist '(prog-mode 2))
   (add-to-list 'copilot-indentation-alist '(org-mode 2))
