@@ -84,7 +84,7 @@
       projectile-project-search-path '("~/dev/nu")
       projectile-enable-caching nil)
 (set-language-environment "UTF-8")
-(setq doom-font (font-spec :family "JetBrains Mono" :size 20 :weight 'light))
+(setq doom-font (font-spec :family "JetBrains Mono" :size 21 :weight 'light))
 
 ;; start default windows size to fullscreen
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
@@ -143,12 +143,11 @@
 (require 'visual-fill-column)
 
 (defun my-org-faces ()
-  ;; (set-face-attribute 'org-todo nil :height 0.8)
+  (set-face-attribute 'org-document-title nil :weight 'bold :height 1.4)
   (set-face-attribute 'org-level-1 nil :height 1.2)
   (set-face-attribute 'org-level-2 nil :height 1.1)
   (set-face-attribute 'org-level-3 nil :height 1.05)
   (set-face-attribute 'org-level-4 nil :height 1.0)
-  (set-face-attribute 'org-document-title nil :weight 'bold :height 1.4)
   (display-line-numbers-mode 0)
   (visual-fill-column-mode 1)
   (visual-fill-column-toggle-center-text))
@@ -194,7 +193,31 @@
                               ;;(org-present-read-write)
                               ))))
 
-;; NU CONFIG
+(use-package! visual-fill-column
+  :config
+  (setq visual-fill-column-width 150))
+
+;; MARKDOWN CONFIG IMPROVEMENTS
+;; TODO: TO BE TESTED
+(use-package! markdown-mode
+  :hook
+  (markdown-mode . (lambda ()
+                     (display-line-numbers-mode 0)
+                     (visual-line-mode 1)
+                     (visual-fill-column-mode 1)
+                     (visual-fill-column-toggle-center-text)))
+  :config
+  (setq visual-fill-column-width 150)
+  (custom-set-faces
+        '(markdown-header-face ((t (:inherit font-lock-function-name-face
+                                    :weight regular
+                                    :family "variable-pitch"))))
+        '(markdown-header-face-1 ((t (:inherit markdown-header-face :height 1.4))))
+        '(markdown-header-face-2 ((t (:inherit markdown-header-face :height 1.2))))
+        '(markdown-header-face-3 ((t (:inherit markdown-header-face :height 1.1))))
+        '(markdown-header-face-4 ((t (:inherit markdown-header-face :height 1.05))))))
+
+                                ;; NU CONFIG
 (use-package! lsp-mode
   :commands lsp
   :config
