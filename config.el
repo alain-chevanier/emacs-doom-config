@@ -78,12 +78,14 @@
 
  ;; save buffers after renaming
 
-;; set default font size to 20 pts
-;; (set-face-attribute 'default nil :font "JetBrains Mono" :weight 'light :height 200)
+;; set default font size to 20 pts, and light weight
+;;(set-face-attribute 'default nil :font "JetBrains Mono" :weight 'light :height 210)
 (setq read-process-output-max (* 1024 1024)
       projectile-project-search-path '("~/dev/nu")
       projectile-enable-caching nil)
+
 (set-language-environment "UTF-8")
+
 (setq doom-font (font-spec :family "JetBrains Mono" :size 21 :weight 'light))
 
 ;; start default windows size to fullscreen
@@ -101,8 +103,11 @@
 
 (require 'lsp-java)
 
-                ;; JAVA CONFIG
-                ;; support for lombok in java
+(setenv "JAVA_HOME" "/Library/Java/JavaVirtualMachines/jdk-17.jdk/Contents/Home")
+(setq lsp-java-java-path (concat (getenv "JAVA_HOME") "/bin/java"))
+
+;; JAVA CONFIG
+;; support for lombok in java
 (setq lsp-java-vmargs `(
                         "-XX:+UseParallelGC"
                         "-XX:GCTimeRatio=4"
@@ -110,7 +115,7 @@
                         "-Dsun.zip.disableMemoryMapping=true"
                         "-Xmx1G"
                         "-Xms100m"
-                        ,(concat "-javaagent:"  "~/.m2/repository/org/projectlombok/lombok/1.18.26/lombok-1.18.26.jar")))
+                        ,(concat "-javaagent:"  (file-truename "~/.m2/repository/org/projectlombok/lombok/1.18.26/lombok-1.18.26.jar"))))
 
 ;; Enable lenses for java
 (add-hook 'java-mode-hook #'lsp-java-boot-lens-mode)
@@ -209,9 +214,9 @@
                      (setq org-roam-completion-everywhere t)))
 
   :bind (:map global-map
-              ("C-c C-n l" . org-roam-buffer-toggle)
-              ("C-c C-n f" . org-roam-node-find)
-              ("C-c C-n i" . org-roam-node-insert)
+              ("C-c C-v l" . org-roam-buffer-toggle)
+              ("C-c C-v f" . org-roam-node-find)
+              ("C-c C-v i" . org-roam-node-insert)
          :map org-mode-map
               ("C-M-i"    . completion-at-point))
   :config
@@ -300,3 +305,7 @@
                ;;                  (copilot-chat-yank-pop -1)))
                )
   )
+
+
+(setq lsp-dart-sdk-dir (expand-file-name "~/development/flutter/bin/cache/dart-sdk"))
+(setq lsp-dart-flutter-sdk-dir (expand-file-name "~/development/flutter"))
