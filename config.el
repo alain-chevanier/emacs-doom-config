@@ -77,23 +77,16 @@
 
  ;; save buffers after renaming
 
-;; set default font size to 20 pts
+;; set default font size to 20 pts, and light weight
+;;(set-face-attribute 'default nil :font "JetBrains Mono" :weight 'light :height 210)
+(setq read-process-output-max (* 1024 1024)
+      projectile-project-search-path '("~/dev/nu")
+      projectile-enable-caching nil)
+
 (set-language-environment "UTF-8")
-(set-face-attribute 'default nil :font "JetBrains Mono" :weight 'light :height 220)
-;; (setq doom-font (font-spec :family "JetBrains Mono" :size 20 :weight 'light))
-(setq read-process-output-max (* 1024 1024))
 
-(setq projectile-project-search-path    '("~/dev/nu"
-                                          ;;"~/dev/nu/mini-meta-repo/packages"
-                                          )
-      projectile-enable-caching         nil
-      ;; projectile-project-root-functions '(projectile-root-local
-      ;;                                     projectile-root-top-down
-      ;;                                     projectile-root-top-down-recurring
-      ;;                                     projectile-root-bottom-up)
-      )
-
-
+;; (set-face-attribute 'default nil :font "JetBrains Mono" :weight 'light :height 220)
+(setq doom-font (font-spec :family "JetBrains Mono" :size 21 :weight 'light))
 
 ;; start default windows size to fullscreen
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
@@ -110,8 +103,11 @@
 
 (require 'lsp-java)
 
-                ;; JAVA CONFIG
-                ;; support for lombok in java
+(setenv "JAVA_HOME" "/Library/Java/JavaVirtualMachines/jdk-17.jdk/Contents/Home")
+(setq lsp-java-java-path (concat (getenv "JAVA_HOME") "/bin/java"))
+
+;; JAVA CONFIG
+;; support for lombok in java
 (setq lsp-java-vmargs `(
                         "-XX:+UseParallelGC"
                         "-XX:GCTimeRatio=4"
