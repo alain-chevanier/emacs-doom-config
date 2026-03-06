@@ -6,8 +6,7 @@
 
 ;; Some functionality uses this to identify you, e.g. GPG configuration, email
 ;; clients, file templates and snippets. It is optional.
-;; (setq user-full-name "John Doe"
-;;       user-mail-address "john@doe.com")
+;; (setq user-full-name "John Doe";;       user-mail-address "john@doe.com")
 
 ;; Doom exposes five (optional) variables for controlling fonts in Doom:
 ;;
@@ -79,19 +78,29 @@
  ;; save buffers after renaming
 
 ;; set default font size to 20 pts
-;; (set-face-attribute 'default nil :font "JetBrains Mono" :weight 'light :height 200)
-(setq read-process-output-max (* 1024 1024)
-      projectile-project-search-path '("~/dev/nu")
-      projectile-enable-caching nil)
 (set-language-environment "UTF-8")
-(setq doom-font (font-spec :family "JetBrains Mono" :size 21 :weight 'light))
+(set-face-attribute 'default nil :font "JetBrains Mono" :weight 'light :height 220)
+;; (setq doom-font (font-spec :family "JetBrains Mono" :size 20 :weight 'light))
+(setq read-process-output-max (* 1024 1024))
+
+(setq projectile-project-search-path    '("~/dev/nu"
+                                          ;;"~/dev/nu/mini-meta-repo/packages"
+                                          )
+      projectile-enable-caching         nil
+      ;; projectile-project-root-functions '(projectile-root-local
+      ;;                                     projectile-root-top-down
+      ;;                                     projectile-root-top-down-recurring
+      ;;                                     projectile-root-bottom-up)
+      )
+
+
 
 ;; start default windows size to fullscreen
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
 
 ;; Let the desktop background show through
-(set-frame-parameter (selected-frame) 'alpha '(96 . 100))
-(add-to-list 'default-frame-alist '(alpha . (96 . 96)))
+(set-frame-parameter (selected-frame) 'alpha '(95 . 100))
+(add-to-list 'default-frame-alist '(alpha . (95 . 95)))
 
 ;; GENERAL PROGRAMMING EDITION FORMATTING
 ;; user 2 spaces tabs
@@ -110,7 +119,7 @@
                         "-Dsun.zip.disableMemoryMapping=true"
                         "-Xmx1G"
                         "-Xms100m"
-                        ,(concat "-javaagent:"  "~/.m2/repository/org/projectlombok/lombok/1.18.26/lombok-1.18.26.jar")))
+                        ,(concat "-javaagent:"  (file-truename "~/.m2/repository/org/projectlombok/lombok/1.18.26/lombok-1.18.26.jar"))))
 
 ;; Enable lenses for java
 (add-hook 'java-mode-hook #'lsp-java-boot-lens-mode)
@@ -143,11 +152,11 @@
 (require 'visual-fill-column)
 
 (defun my-org-faces ()
-  (set-face-attribute 'org-document-title nil :weight 'bold :height 1.4)
   (set-face-attribute 'org-level-1 nil :height 1.2)
   (set-face-attribute 'org-level-2 nil :height 1.1)
   (set-face-attribute 'org-level-3 nil :height 1.05)
   (set-face-attribute 'org-level-4 nil :height 1.0)
+  (set-face-attribute 'org-document-title nil :weight 'bold :height 1.4)
   (display-line-numbers-mode 0)
   (visual-fill-column-mode 1)
   (visual-fill-column-toggle-center-text))
@@ -167,30 +176,52 @@
   ;; org-mode to use visual-fill-column
   (setq visual-fill-column-width 180)
 
+  ;; use
+
   ;; config for org-mode to work nicely with minted for code syntax highligting
   (add-to-list 'org-latex-packages-alist '("" "minted"))
+
+  ;; (add-to-list 'org-latex-classes
+  ;;      '("beamer"
+  ;;        "\\documentclass{beamer}
+  ;;        \\usepackage[utf8]{inputenc}
+  ;;        \\usepackage[T1]{fontenc}"))
   (setq org-latex-src-block-backend 'minted
         org-latex-pdf-process
         '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
           "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
           "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f")))
 
+(eval-after-load "ox-latex"
+
+  ;; update the list of LaTeX classes and associated header (encoding, etc.)
+  ;; and structure
+  '(add-to-list 'org-latex-classes
+                `("beamer"
+                  ,(concat "\\documentclass[presentation]{beamer}\n"
+                           "[DEFAULT-PACKAGES]"
+                           "[PACKAGES]"
+                           "[EXTRA]\n")
+                  ("\\section{%s}" . "\\section*{%s}")
+                  ("\\subsection{%s}" . "\\subsection*{%s}")
+                  ("\\subsubsection{%s}" . "\\subsubsection*{%s}"))))
+
 (use-package! org-present
   :after org
   :hook
   ((org-present-mode  .    (lambda ()
-                             ;;(org-present-big)
+                                        ;;(org-present-big)
                              (setq header-line-format " ")
                              (org-display-inline-images)
-                             ;;(org-present-hide-cursor)
-                             ;;(org-present-read-only)
+                                        ;;(org-present-hide-cursor)
+                                        ;;(org-present-read-only)
                              ))
    (org-present-mode-quit . (lambda ()
-                              ;;(org-present-small)
+                                        ;;(org-present-small)
                               (setq header-line-format nil)
                               (org-remove-inline-images)
-                              ;;(org-present-show-cursor)
-                              ;;(org-present-read-write)
+                                        ;;(org-present-show-cursor)
+                                        ;;(org-present-read-write)
                               ))))
 
 (use-package! visual-fill-column
@@ -209,22 +240,23 @@
                      (setq org-roam-completion-everywhere t)))
 
   :bind (:map global-map
-              ("C-c C-n l" . org-roam-buffer-toggle)
-              ("C-c C-n f" . org-roam-node-find)
-              ("C-c C-n i" . org-roam-node-insert)
+              ("C-c C-v l" . org-roam-buffer-toggle)
+              ("C-c C-v f" . org-roam-node-find)
+              ("C-c C-v i" . org-roam-node-insert)
          :map org-mode-map
               ("C-M-i"    . completion-at-point))
   :config
   (setq org-roam-directory (file-truename "~/Dropbox/org-docs/roam"))
   (setq org-roam-completion-everywhere t)
-  ;; (setq org-roam-capture-templates
-  ;;       '(("d" "default" plain "%?"
-  ;;          :target (file+head "${slug}.org" "#+title: ${title}\n")
-  ;;          :unnarrowed t)
-  ;;         ("r" "reference" plain "%?"
-  ;;          :target (file+head "${slug}.org" "#+title: ${title}\n#+roam_key: ${ref}\n")
-  ;;          :unnarrowed t)))
-  )
+  (setq org-roam-capture-templates
+        '(("d" "default" plain
+           "%?"
+           :target (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
+           :unnarrowed t)
+          ("p" "desing pattern" plain
+           "* OO Basics\n%?\n* OO Principles\n\n* Definition\n\n"
+           :target (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
+           :unnarrowed t))))
 
 ;; MARKDOWN CONFIG IMPROVEMENTS
 ;; TODO: TO BE TESTED
@@ -280,14 +312,14 @@
         ("C-M-<tab>" . 'copilot-accept-completion-by-word)
         ;;("C-n"       . 'copilot-next-completion)
         ;;("C-p"       . 'copilot-previous-completion)
-        )
+        ))
 
-  :config
-  (add-to-list 'copilot-indentation-alist '(prog-mode 2))
-  (add-to-list 'copilot-indentation-alist '(org-mode 2))
-  (add-to-list 'copilot-indentation-alist '(text-mode 2))
-  (add-to-list 'copilot-indentation-alist '(closure-mode 2))
-  (add-to-list 'copilot-indentation-alist '(emacs-lisp-mode 2)))
+;;   :config
+;;   (add-to-list 'copilot-indentation-alist '(prog-mode 2))
+;;   (add-to-list 'copilot-indentation-alist '(org-mode 2))
+;;   (add-to-list 'copilot-indentation-alist '(text-mode 2))
+;;   (add-to-list 'copilot-indentation-alist '(closure-mode 2))
+;;   (add-to-list 'copilot-indentation-alist '(emacs-lisp-mode 2)))
 
 ;; install and configure copilot-chat
 (use-package! copilot-chat
@@ -300,3 +332,6 @@
                ;;                  (copilot-chat-yank-pop -1)))
                )
   )
+
+(setq lsp-dart-sdk-dir (expand-file-name "~/sdk-flutter/bin/cache/dart-sdk"))
+(setq lsp-dart-flutter-sdk-dir (expand-file-name "~/sdk-flutter"))
